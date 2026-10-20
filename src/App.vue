@@ -1,38 +1,62 @@
 <script setup>
-import { ref } from 'vue'
-
-const name = ref('Joe Bloggs')
-const bio = ref('I am learning to build interactive web pages.')
-// TASK 4: Create a reactive likes counter.
-const likes = ref(0);
-// TASK 5: Create reactive showFact and fact values.
-const showFact = ref(false);
-const fact = ref('I can name five constellations.')
+import { ref, computed } from 'vue'
+const newExercise = ref('')
+const newMinutes = ref(15)
+const errorMessage = ref('')
+let nextId = 3
+const exercises = ref([
+  { id: 1, name: 'Walking', minutes: 20, completed: false },
+  { id: 2, name: 'Stretching', minutes: 10, completed: false }
+])
 </script>
 
+
 <template>
-  <main>
-    <article class="card">
-      <p class="eyebrow">MY FIRST VUE PAGE</p>
-      <h1>{{ name }}</h1>
-      <p>{{ bio }}</p>
-      <!-- TASK 2: Add a labelled input with v-model="name" here. -->
-      <label for="name">Your Name:</label>
-      <input id="name" v-model="name"maxlength="60">
-      <!--bio-->
-      <label for ="bio">Your Bio:</label>
-      <input id="bio" v-model="bio"maxlength="60">
-      <!-- TASK 4: Add a button, click counter and @click here. -->
-    <button type="button"@click="likes++">Like this page</button>
-      <button type="button"@click="likes=0">Reset Likes</button>
-      <p aria-live="polite">Likes: {{likes}}</p>
-      <!-- TASK 5: Add a toggle button and v-if paragraph here. -->
-      <button type="button" @click="showFact=!showFact"
-              :aria-expanded="showFact"aria-controls="fact">
-        {{ showFact ? 'Hide fun fact' : 'Show fun fact'}}
-      </button>
-      <p id="fact" v-if="showFact">{{fact}}</p>
-    </article>
+  <main class="dashboard">
+    <header class="hero">
+      <p class="eyebrow">YOUR DAILY WORKOUT PLANNER</p>
+      <h1>Shape Up</h1>
+      <p>Small steps. Stronger habits.</p>
+    </header>
+    <!-- STEP 7: Progress summary goes here. -->
+    <div class="dashboard-grid">
+      <section class="panel">
+        <h2>Plan an exercise</h2>
+        <!--step 5 -->
+        <form @submit.prevent="addExercise">
+          <label for="exercise-name">Exercise name</label>
+          <input id="exercise-name" v-model="newExercise" type="text"
+                 placeholder="For example, cycling"maxlength="60"required>
+          <label for="exercise-minutes">Duration in minutes</label>
+          <input id="exercise-minutes"v-model.number="newMinutes"
+                 type="number"min="1" max="180" step="1" required>
+
+          <button type="submit" class="primary-button">Add exercise</button>
+          <p v-if="errorMessgae" class="error-message" role="alert">
+            {{errorMessage}}
+          </p>
+        </form>
+      </section>
+      <section class="panel">
+        <h2>Your workout</h2>
+        <p v-if="exercises.length===0" class="empty-state">
+        </p>
+        <ul v-else class="exercise-list">
+          <li v-for="exercise in exercises" :key="exercise.id"
+              class="exercise"
+              :class="{completed:exercise.completed}">
+            <label class="exercise-details">
+              <input type="checkbox" v-model="exercise.completed">
+              <span>
+                <strong>{{exercise.name}}</strong>
+                <small>{{exercise.minutes}}minutes</small>
+              </span>
+            </label>
+            <!-- STEP 6: Remove button goes here. -->
+          </li>
+        </ul>
+      </section>
+    </div>
   </main>
 </template>
 
